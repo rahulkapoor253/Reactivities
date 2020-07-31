@@ -7,8 +7,10 @@ namespace Persistence
 {
     public class Seed
     {
-        public static void SeedData(DataContext context) {
-            if(context.Activities.Any()) {
+        public static void SeedData(DataContext context)
+        {
+            if (context.Activities.Any())
+            {
                 var activitiesList = new List<Activity>{
                     new Activity
                     {

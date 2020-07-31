@@ -10,16 +10,16 @@ namespace Persistence
         {
         }
 
-        public DbSet<Value> Values { get;set;}
+        public DbSet<Value> Values { get; set; }
 
-        public DbSet<Activity> Activities { get;set;}
+        public DbSet<Activity> Activities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Value>().HasData(
-                new Value{ ID = 1, Name = "Value1" },
-                new Value{ ID = 2, Name = "Value2" },
-                new Value{ ID = 3, Name = "Value3" }
+                new Value { ID = 1, Name = "Value1" },
+                new Value { ID = 2, Name = "Value2" },
+                new Value { ID = 3, Name = "Value3" }
                 );
         }
 
