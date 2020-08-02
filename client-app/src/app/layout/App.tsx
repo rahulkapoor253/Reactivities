@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
-import axios from "axios";
+import agent from "../api/agent";
 import { Container } from "semantic-ui-react";
 import { IActivity } from "../models/Activity";
 import NavBar from "../../features/nav/Navbar";
@@ -23,33 +23,50 @@ const App = () => {
   };
 
   const handleCreateActivity = (activity: IActivity) => {
-    setActivities([...activities, activity]);
-    setSelectedActivity(activity);
-    setEditMode(false);
+    agent.Activities.create(activity)
+      .then(() => {
+        setActivities([...activities, activity]);
+        setSelectedActivity(activity);
+        setEditMode(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleEditActivity = (activity: IActivity) => {
     //filter all activities with unmatching edited activity id and then add it to end
-    setActivities([
-      ...activities.filter((x) => x.id !== activity.id),
-      activity,
-    ]);
-    setSelectedActivity(activity);
-    setEditMode(false);
+    agent.Activities.update(activity)
+      .then(() => {
+        setActivities([
+          ...activities.filter((x) => x.id !== activity.id),
+          activity,
+        ]);
+        setSelectedActivity(activity);
+        setEditMode(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleDeleteActivity = (id: string) => {
-    setActivities([...activities.filter((x) => x.id !== id)]);
+    agent.Activities.delete(id)
+      .then(() => {
+        setActivities([...activities.filter((x) => x.id !== id)]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
     //fetch data from .netcore api
-    axios
-      .get<IActivity[]>("http://localhost:5000/api/activities")
+    agent.Activities.list()
       .then((response) => {
         //reformat datetime
         let activities: IActivity[] = [];
-        response.data.forEach((activity) => {
+        response.forEach((activity: any) => {
           activity.date = activity.date.split(".")[0];
           activities.push(activity);
         });
