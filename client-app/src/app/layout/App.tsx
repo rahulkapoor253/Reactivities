@@ -10,9 +10,31 @@ const App = () => {
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(
     null
   );
+  const [editMode, setEditMode] = useState(false);
 
   const handleSelectActivity = (id: string) => {
     setSelectedActivity(activities.filter((x) => x.id === id)[0]);
+  };
+
+  const handleOpenCreateForm = () => {
+    setSelectedActivity(null);
+    setEditMode(true);
+  };
+
+  const handleCreateActivity = (activity: IActivity) => {
+    setActivities([...activities, activity]);
+    setSelectedActivity(activity);
+    setEditMode(false);
+  };
+
+  const handleEditActivity = (activity: IActivity) => {
+    //filter all activities with unmatching edited activity id and then add it to end
+    setActivities([
+      ...activities.filter((x) => x.id !== activity.id),
+      activity,
+    ]);
+    setSelectedActivity(activity);
+    setEditMode(false);
   };
 
   useEffect(() => {
@@ -29,12 +51,17 @@ const App = () => {
 
   return (
     <Fragment>
-      <NavBar />
+      <NavBar createForm={handleOpenCreateForm} />
       <Container style={{ marginTop: "7em" }}>
         <ActivityDashboard
           activities={activities}
           selectActivity={handleSelectActivity}
           selectedActivity={selectedActivity}
+          editMode={editMode}
+          setEditMode={setEditMode}
+          setSelectedActivity={setSelectedActivity}
+          createActivity={handleCreateActivity}
+          editActivity={handleEditActivity}
         />
       </Container>
     </Fragment>
