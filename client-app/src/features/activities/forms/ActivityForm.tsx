@@ -2,6 +2,7 @@ import React, { useState, FormEvent } from "react";
 import { Segment, Form, Button } from "semantic-ui-react";
 import { IActivity } from "../../../app/models/Activity";
 import { v4 as uuid } from "uuid";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
   setEditMode: (editMode: boolean) => void;
@@ -119,4 +120,4 @@ const ActivityForm: React.FC<IProps> = ({
   );
 };
 
-export default ActivityForm;
+export default observer(ActivityForm);

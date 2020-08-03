@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useContext } from "react";
 import agent from "../api/agent";
 import { Container } from "semantic-ui-react";
 import { IActivity } from "../models/Activity";
@@ -6,14 +6,16 @@ import NavBar from "../../features/nav/Navbar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
 import LoadingComponent from "./LoadingComponent";
 import { SyntheticEvent } from "react";
+import ActivityStore from "../stores/activityStore";
+import { observer } from "mobx-react-lite";
 
 const App = () => {
+  const activityStore = useContext(ActivityStore);
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(
     null
   );
   const [editMode, setEditMode] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [target, setTarget] = useState("");
 
@@ -83,36 +85,20 @@ const App = () => {
   };
 
   useEffect(() => {
-    //fetch data from .netcore api
-    agent.Activities.list()
-      .then((response) => {
-        //reformat datetime
-        let activities: IActivity[] = [];
-        response.forEach((activity: any) => {
-          activity.date = activity.date.split(".")[0];
-          activities.push(activity);
-        });
-        setActivities(activities);
-      })
-      .then(() => {
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    //get all activities from .net core api and store it in activities array obserable in mobx store
+    activityStore.loadActivities();
+  }, [activityStore]);
 
-  if (loading) return <LoadingComponent content="Loading activities" />;
+  if (activityStore.loadingInitial)
+    return <LoadingComponent content="Loading activities" />;
 
   return (
     <Fragment>
       <NavBar createForm={handleOpenCreateForm} />
       <Container style={{ marginTop: "7em" }}>
         <ActivityDashboard
-          activities={activities}
+          activities={activityStore.activities}
           selectActivity={handleSelectActivity}
-          selectedActivity={selectedActivity}
-          editMode={editMode}
           setEditMode={setEditMode}
           setSelectedActivity={setSelectedActivity}
           createActivity={handleCreateActivity}
@@ -126,4 +112,5 @@ const App = () => {
   );
 };
 
-export default App;
+//hoc that will observe the component and changes to mobx store observable
+export default observer(App);
