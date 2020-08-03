@@ -19,33 +19,6 @@ const App = () => {
   const [submitting, setSubmitting] = useState(false);
   const [target, setTarget] = useState("");
 
-  const handleSelectActivity = (id: string) => {
-    setSelectedActivity(activities.filter((x) => x.id === id)[0]);
-    setEditMode(false);
-  };
-
-  const handleOpenCreateForm = () => {
-    setSelectedActivity(null);
-    setEditMode(true);
-  };
-
-  const handleCreateActivity = (activity: IActivity) => {
-    //activate the loader component
-    setSubmitting(true);
-    agent.Activities.create(activity)
-      .then(() => {
-        setActivities([...activities, activity]);
-        setSelectedActivity(activity);
-        setEditMode(false);
-      })
-      .then(() => {
-        setSubmitting(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const handleEditActivity = (activity: IActivity) => {
     //filter all activities with unmatching edited activity id and then add it to end
     setSubmitting(true);
@@ -94,14 +67,11 @@ const App = () => {
 
   return (
     <Fragment>
-      <NavBar createForm={handleOpenCreateForm} />
+      <NavBar />
       <Container style={{ marginTop: "7em" }}>
         <ActivityDashboard
-          activities={activityStore.activities}
-          selectActivity={handleSelectActivity}
           setEditMode={setEditMode}
           setSelectedActivity={setSelectedActivity}
-          createActivity={handleCreateActivity}
           editActivity={handleEditActivity}
           deleteActivity={handleDeleteActivity}
           submitting={submitting}
