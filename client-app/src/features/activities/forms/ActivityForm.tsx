@@ -1,40 +1,59 @@
-import React, { useState, FormEvent, useContext } from "react";
+import React, { useState, FormEvent, useContext, useEffect } from "react";
 import { Segment, Form, Button } from "semantic-ui-react";
 import { IActivity } from "../../../app/models/Activity";
 import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
 import ActivityStore from "../../../app/stores/activityStore";
+import { RouteComponentProps } from "react-router-dom";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-interface IProps {
-  activity: IActivity;
+interface DetailParams {
+  id: string;
 }
 
-const ActivityForm: React.FC<IProps> = ({ activity: initFormState }) => {
+const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
+  match,
+}) => {
   const activityStore = useContext(ActivityStore);
   const {
+    activity: initFormState,
     createActivity,
     editActivity,
     submitting,
     cancelFormOpen,
+    loadActivity,
+    clearActivity,
+    loadingInitial,
   } = activityStore;
 
-  const initForm = () => {
-    if (initFormState) {
-      return initFormState;
-    }
-    //else return object with init values
-    return {
-      id: "",
-      title: "",
-      description: "",
-      category: "",
-      date: "",
-      city: "",
-      venue: "",
-    };
-  };
+  //init with blank and in sync useEffect is called
+  const [activity, setActivity] = useState<IActivity>({
+    id: "",
+    title: "",
+    description: "",
+    category: "",
+    date: "",
+    city: "",
+    venue: "",
+  });
 
-  const [activity, setActivity] = useState<IActivity>(initForm);
+  useEffect(() => {
+    //use only in case of edit activity and not create activity
+    if (match.params.id && activity.id.length > 0) {
+      loadActivity(match.params.id).then(
+        () => initFormState && setActivity(initFormState)
+      );
+    }
+    return () => {
+      clearActivity();
+    };
+  }, [
+    loadActivity,
+    clearActivity,
+    match.params.id,
+    initFormState,
+    activity.id.length,
+  ]);
 
   const handleSubmitForm = () => {
     console.log(activity);
@@ -58,6 +77,8 @@ const ActivityForm: React.FC<IProps> = ({ activity: initFormState }) => {
     const { name, value } = event.currentTarget;
     setActivity({ ...activity, [name]: value });
   };
+
+  if (loadingInitial) return <LoadingComponent content="Loading activity" />;
 
   return (
     <Segment clearing>
