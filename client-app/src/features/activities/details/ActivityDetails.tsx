@@ -44,7 +44,7 @@ const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
             content="Edit"
             color="blue"
             as={Link}
-            to={`/manage/${activity!.id}`}
+            to={`/manage/${activity.id}`}
           />
           <Button
             basic

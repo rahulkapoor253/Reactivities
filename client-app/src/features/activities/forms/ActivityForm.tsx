@@ -5,7 +5,6 @@ import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
 import ActivityStore from "../../../app/stores/activityStore";
 import { RouteComponentProps } from "react-router-dom";
-import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 interface DetailParams {
   id: string;
@@ -13,6 +12,7 @@ interface DetailParams {
 
 const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
   match,
+  history,
 }) => {
   const activityStore = useContext(ActivityStore);
   const {
@@ -20,10 +20,8 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     createActivity,
     editActivity,
     submitting,
-    cancelFormOpen,
     loadActivity,
     clearActivity,
-    loadingInitial,
   } = activityStore;
 
   //init with blank and in sync useEffect is called
@@ -39,7 +37,8 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
 
   useEffect(() => {
     //use only in case of edit activity and not create activity
-    if (match.params.id && activity.id.length > 0) {
+    if (match.params.id && activity.id.length === 0) {
+      console.log("fetching activity");
       loadActivity(match.params.id).then(
         () => initFormState && setActivity(initFormState)
       );
@@ -59,14 +58,18 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     console.log(activity);
     if (activity.id.length > 0) {
       //edited activity
-      editActivity(activity);
+      editActivity(activity).then(() =>
+        history.push(`/activities/${activity.id}`)
+      );
     } else {
       //created new activity
       let newActivity = {
         ...activity,
         id: uuid(),
       };
-      createActivity(newActivity);
+      createActivity(newActivity).then(() =>
+        history.push(`/activities/${activity.id}`)
+      );
     }
   };
 
@@ -78,11 +81,9 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     setActivity({ ...activity, [name]: value });
   };
 
-  if (loadingInitial) return <LoadingComponent content="Loading activity" />;
-
   return (
     <Segment clearing>
-      <Form>
+      <Form onSubmit={handleSubmitForm}>
         <Form.Input
           placeholder="Title"
           onChange={handleInputChange}
@@ -127,13 +128,12 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
           positive
           type="submit"
           content="submit"
-          onClick={handleSubmitForm}
         />
         <Button
           floated="right"
           type="button"
           content="cancel"
-          onClick={cancelFormOpen}
+          onClick={() => history.push("/activities")}
         />
       </Form>
     </Segment>
