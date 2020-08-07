@@ -36,7 +36,6 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
   });
 
   useEffect(() => {
-    //use only in case of edit activity and not create activity
     if (match.params.id && activity.id.length === 0) {
       console.log("fetching activity");
       loadActivity(match.params.id).then(
