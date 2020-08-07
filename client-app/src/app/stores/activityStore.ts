@@ -12,10 +12,27 @@ class ActivityStore {
   @observable submitting = false;
   @observable target = "";
 
+  groupActivitiesByDate(activities: IActivity[]) {
+    const sortedActivitiesByDate = activities.sort(
+      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+    );
+
+    return Object.entries(
+      //we want to group on the date as key and same date activity as values
+      sortedActivitiesByDate.reduce((activities, activity) => {
+        const date = activity.date.split("T")[0];
+        activities[date] = activities[date]
+          ? [...activities[date], activity]
+          : [activity];
+        return activities;
+      }, {} as { [key: string]: IActivity[] })
+    );
+  }
+
   //sort activities by date
   @computed get activitiesByDate() {
-    return Array.from(this.activityRegistry.values()).sort(
-      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+    return this.groupActivitiesByDate(
+      Array.from(this.activityRegistry.values())
     );
   }
 
@@ -32,6 +49,7 @@ class ActivityStore {
         });
         this.loadingInitial = false;
       });
+      console.log(this.groupActivitiesByDate(activities));
     } catch (err) {
       console.log(err);
       runInAction("loading activities error", () => {
