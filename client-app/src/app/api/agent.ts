@@ -1,12 +1,17 @@
 import axios, { AxiosResponse } from "axios";
 import { IActivity } from "../models/Activity";
 import { history } from "../..";
+import { toast } from "react-toastify";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
 //intercept response errors
 axios.interceptors.response.use(undefined, (error) => {
   //throw error which is catched in the api call in store
+  //console.log(error.response);
+  if (error.message === "Network Error" && !error.response) {
+    toast.error("Network Error");
+  }
   const { status, data, config } = error.response;
   if (status === 404) {
     history.push("/notfound");
@@ -17,6 +22,9 @@ axios.interceptors.response.use(undefined, (error) => {
     data.errors.hasOwnProperty("id")
   ) {
     history.push("/notfound");
+  }
+  if (status === 500) {
+    toast.error("Server error");
   }
 });
 

@@ -50,7 +50,7 @@ class ActivityStore {
         });
         this.loadingInitial = false;
       });
-      console.log(this.groupActivitiesByDate(activities));
+      //console.log(this.groupActivitiesByDate(activities));
     } catch (err) {
       console.log(err);
       runInAction("loading activities error", () => {
