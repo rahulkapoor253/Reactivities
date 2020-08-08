@@ -1,7 +1,24 @@
 import axios, { AxiosResponse } from "axios";
 import { IActivity } from "../models/Activity";
+import { history } from "../..";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
+
+//intercept response errors
+axios.interceptors.response.use(undefined, (error) => {
+  //throw error which is catched in the api call in store
+  const { status, data, config } = error.response;
+  if (status === 404) {
+    history.push("/notfound");
+  }
+  if (
+    status === 400 &&
+    config.method === "get" &&
+    data.errors.hasOwnProperty("id")
+  ) {
+    history.push("/notfound");
+  }
+});
 
 const responseBody = (response: AxiosResponse) => response.data;
 
