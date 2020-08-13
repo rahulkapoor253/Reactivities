@@ -10,6 +10,7 @@ import TextInput from "../../../app/common/form/TextInput";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import Categories from "../../../app/common/form/Categories";
+import DateInput from "../../../app/common/form/DateInput";
 
 interface DetailParams {
   id: string;
@@ -35,7 +36,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     title: "",
     description: "",
     category: "",
-    date: "",
+    date: null,
     city: "",
     venue: "",
   });
@@ -104,9 +105,8 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
                   value={activity.category}
                 />
                 <Field
-                  type="datetime-local"
                   placeholder="Date"
-                  component={TextInput}
+                  component={DateInput}
                   name="date"
                   value={activity.date}
                 />

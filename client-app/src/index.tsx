@@ -7,17 +7,21 @@ import { Router } from "react-router-dom";
 import ScrollToTop from "./app/layout/ScrollToTop";
 import { createBrowserHistory } from "history";
 import "react-toastify/dist/ReactToastify.css";
+import "react-widgets/dist/css/react-widgets.css";
+import dateFnsLocalizer from "react-widgets-date-fns";
+
+dateFnsLocalizer();
 
 export const history = createBrowserHistory();
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React.Fragment>
     <Router history={history}>
       <ScrollToTop>
         <App />
       </ScrollToTop>
     </Router>
-  </React.StrictMode>,
+  </React.Fragment>,
   document.getElementById("root")
 );
 
