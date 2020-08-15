@@ -4,6 +4,7 @@ import { createContext, SyntheticEvent } from "react";
 import { IActivity } from "../models/Activity";
 import agent from "../api/agent";
 import { history } from "../..";
+import { toast } from "react-toastify";
 
 configure({ enforceActions: "always" });
 
@@ -112,10 +113,11 @@ class ActivityStore {
       });
       history.push(`/activities/${activity.id}`);
     } catch (err) {
-      console.log(err);
       runInAction("create activity error", () => {
         this.submitting = false;
       });
+      console.log(err.response);
+      toast.error("problem submitting data");
     }
   };
 
@@ -134,10 +136,11 @@ class ActivityStore {
       });
       history.push(`/activities/${activity.id}`);
     } catch (err) {
-      console.log(err);
       runInAction("edit activity error", () => {
         this.submitting = false;
       });
+      console.log(err.response);
+      toast.error("problem submitting data");
     }
   };
 
