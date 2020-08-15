@@ -3,6 +3,7 @@ import "mobx-react-lite/batchingForReactDom";
 import { createContext, SyntheticEvent } from "react";
 import { IActivity } from "../models/Activity";
 import agent from "../api/agent";
+import { history } from "../..";
 
 configure({ enforceActions: "always" });
 
@@ -74,6 +75,8 @@ class ActivityStore {
         runInAction("loading activity", () => {
           activity.date = new Date(activity.date);
           this.activity = activity;
+          //to prevent another call to api on manage activity page-> it finds it in registry only now
+          this.activityRegistry.set(activity.id, activity);
           this.loadingInitial = false;
         });
         return activity;
@@ -107,6 +110,7 @@ class ActivityStore {
         this.activity = activity;
         this.submitting = false;
       });
+      history.push(`/activities/${activity.id}`);
     } catch (err) {
       console.log(err);
       runInAction("create activity error", () => {
@@ -128,6 +132,7 @@ class ActivityStore {
         this.activity = activity;
         this.submitting = false;
       });
+      history.push(`/activities/${activity.id}`);
     } catch (err) {
       console.log(err);
       runInAction("edit activity error", () => {

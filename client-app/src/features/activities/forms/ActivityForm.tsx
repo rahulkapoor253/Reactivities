@@ -31,6 +31,8 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     submitting,
     loadActivity,
     clearActivity,
+    createActivity,
+    editActivity,
   } = activityStore;
 
   //init with blank and in sync useEffect is called
@@ -50,31 +52,23 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     }
   }, [loadActivity, match.params.id]);
 
-  // const handleSubmitForm = () => {
-  //   console.log(activity);
-  //   if (activity.id.length > 0) {
-  //     //edited activity
-  //     editActivity(activity).then(() =>
-  //       history.push(`/activities/${activity.id}`)
-  //     );
-  //   } else {
-  //     //created new activity
-  //     let newActivity = {
-  //       ...activity,
-  //       id: uuid(),
-  //     };
-  //     createActivity(newActivity).then(() =>
-  //       history.push(`/activities/${activity.id}`)
-  //     );
-  //   }
-  // };
-
   const handleFinalFormSubmit = (values: any) => {
     //combine date and time with utils
     const dateAndTime = combineDateAndTime(values.date, values.time);
     const { date, time, ...activity } = values;
     activity.date = dateAndTime;
     console.log(activity);
+    if (activity.id) {
+      //edited activity
+      editActivity(activity);
+    } else {
+      //created new activity
+      let newActivity = {
+        ...activity,
+        id: uuid(),
+      };
+      createActivity(newActivity);
+    }
   };
 
   return (
@@ -140,12 +134,18 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
                   positive
                   type="submit"
                   content="submit"
+                  disabled={loading}
                 />
                 <Button
                   floated="right"
                   type="button"
                   content="cancel"
-                  onClick={() => history.push("/activities")}
+                  disabled={loading}
+                  onClick={
+                    activity.id
+                      ? () => history.push(`/activities/${activity.id}`)
+                      : () => history.push("/activities")
+                  }
                 />
               </Form>
             )}
