@@ -1,6 +1,10 @@
 import React, { useState, FormEvent, useContext, useEffect } from "react";
 import { Segment, Form, Button, Grid } from "semantic-ui-react";
-import { IActivity, IActivityFormValues } from "../../../app/models/Activity";
+import {
+  IActivity,
+  IActivityFormValues,
+  ActivityFormValues,
+} from "../../../app/models/Activity";
 import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
 import ActivityStore from "../../../app/stores/activityStore";
@@ -11,6 +15,7 @@ import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import Categories from "../../../app/common/form/Categories";
 import DateInput from "../../../app/common/form/DateInput";
+import { combineDateAndTime } from "../../../app/common/utils/util";
 
 interface DetailParams {
   id: string;
@@ -29,34 +34,21 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
   } = activityStore;
 
   //init with blank and in sync useEffect is called
-  const [activity, setActivity] = useState<IActivityFormValues>({
-    id: undefined,
-    title: "",
-    description: "",
-    category: "",
-    date: undefined,
-    time: undefined,
-    city: "",
-    venue: "",
-  });
+  const [activity, setActivity] = useState(new ActivityFormValues());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (match.params.id && activity.id) {
+    //if page is called from url and no activity is present, fire getactivitybyid call
+    if (match.params.id) {
+      setLoading(true);
       console.log("fetching activity");
-      loadActivity(match.params.id).then(
-        () => initFormState && setActivity(initFormState)
-      );
+      loadActivity(match.params.id)
+        .then((activity) => setActivity(new ActivityFormValues(activity)))
+        .finally(() => {
+          setLoading(false);
+        });
     }
-    return () => {
-      clearActivity();
-    };
-  }, [
-    loadActivity,
-    clearActivity,
-    activity.id,
-    initFormState,
-    match.params.id,
-  ]);
+  }, [loadActivity, match.params.id]);
 
   // const handleSubmitForm = () => {
   //   console.log(activity);
@@ -78,7 +70,11 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
   // };
 
   const handleFinalFormSubmit = (values: any) => {
-    console.log(values);
+    //combine date and time with utils
+    const dateAndTime = combineDateAndTime(values.date, values.time);
+    const { date, time, ...activity } = values;
+    activity.date = dateAndTime;
+    console.log(activity);
   };
 
   return (
@@ -86,9 +82,10 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
       <Grid.Column width={10}>
         <Segment clearing>
           <FinalForm
+            initialValues={activity}
             onSubmit={handleFinalFormSubmit}
             render={({ handleSubmit }) => (
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit} loading={loading}>
                 <Field
                   placeholder="Title"
                   component={TextInput}
