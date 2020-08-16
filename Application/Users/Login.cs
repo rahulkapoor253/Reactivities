@@ -2,6 +2,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Errors;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
@@ -31,10 +32,12 @@ namespace Application.Users
         {
             private readonly UserManager<AppUser> _userManager;
             private readonly SignInManager<AppUser> _signInManager;
-            public Handler(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+            private readonly IJWTGenerator _generator;
+            public Handler(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IJWTGenerator generator)
             {
                 _signInManager = signInManager;
                 _userManager = userManager;
+                _generator = generator;
             }
 
             public async Task<User> Handle(Query request, CancellationToken cancellationToken)
@@ -54,7 +57,7 @@ namespace Application.Users
                         DisplayName = user.DisplayName,
                         Username = user.UserName,
                         Image = null,
-                        Token = "to be generated"
+                        Token = _generator.CreateToken(user)
                     };
                 }
                 throw new RestException(HttpStatusCode.Unauthorized);
