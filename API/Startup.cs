@@ -72,7 +72,10 @@ namespace API
                 };
             });
 
+            //jwt generator reference
             services.AddScoped<IJWTGenerator, JWTGenerator>();
+            //httpcontext user access reference
+            services.AddScoped<IUserAccess, UserAccess>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
