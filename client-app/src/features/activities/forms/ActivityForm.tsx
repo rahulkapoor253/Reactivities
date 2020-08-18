@@ -3,7 +3,6 @@ import { Segment, Form, Button, Grid } from "semantic-ui-react";
 import { ActivityFormValues } from "../../../app/models/Activity";
 import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
-import ActivityStore from "../../../app/stores/activityStore";
 import { RouteComponentProps } from "react-router-dom";
 import { Form as FinalForm, Field } from "react-final-form";
 import TextInput from "../../../app/common/form/TextInput";
@@ -13,6 +12,7 @@ import Categories from "../../../app/common/form/Categories";
 import DateInput from "../../../app/common/form/DateInput";
 import { combineDateAndTime } from "../../../app/common/utils/util";
 import { combineValidators, isRequired } from "revalidate";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const validate = combineValidators({
   title: isRequired({ message: "Event title is required" }),
@@ -32,13 +32,13 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
   match,
   history,
 }) => {
-  const activityStore = useContext(ActivityStore);
+  const rootStore = useContext(RootStoreContext);
   const {
     submitting,
     loadActivity,
     createActivity,
     editActivity,
-  } = activityStore;
+  } = rootStore.activityStore;
 
   //init with blank and in sync useEffect is called
   const [activity, setActivity] = useState(new ActivityFormValues());
