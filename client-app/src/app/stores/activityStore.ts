@@ -1,6 +1,6 @@
 import { observable, action, computed, runInAction } from "mobx";
 import "mobx-react-lite/batchingForReactDom";
-import { createContext, SyntheticEvent } from "react";
+import { SyntheticEvent } from "react";
 import { IActivity } from "../models/Activity";
 import agent from "../api/agent";
 import { history } from "../..";

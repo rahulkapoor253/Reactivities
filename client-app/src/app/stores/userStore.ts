@@ -3,6 +3,7 @@ import "mobx-react-lite/batchingForReactDom";
 import agent from "../api/agent";
 import { IUser, IUserFormValues } from "../models/user";
 import { RootStore } from "./rootStore";
+import { history } from "../..";
 
 export default class UserStore {
   rootStore: RootStore;
@@ -25,8 +26,10 @@ export default class UserStore {
       });
 
       console.log(user);
+      history.push("/activities");
     } catch (err) {
       console.log(err);
+      throw err;
     }
   };
 }
