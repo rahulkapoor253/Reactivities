@@ -6,6 +6,20 @@ import { IUser, IUserFormValues } from "../models/user";
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
+//intercept each request to bind jwt
+axios.interceptors.request.use(
+  (config) => {
+    const token = window.localStorage.getItem("jwt");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (err) => {
+    return Promise.reject(err);
+  }
+);
+
 //intercept response errors
 axios.interceptors.response.use(undefined, (error) => {
   //throw error which is catched in the api call in store

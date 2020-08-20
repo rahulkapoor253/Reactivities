@@ -26,10 +26,18 @@ export default class UserStore {
       });
 
       console.log(user);
+      this.rootStore.commonStore.setToken(user.token);
       history.push("/activities");
     } catch (err) {
       console.log(err);
       throw err;
     }
+  };
+
+  @action logout = () => {
+    this.rootStore.commonStore.setToken(null);
+    this.user = null;
+    //redirect to home
+    history.push("/");
   };
 }
