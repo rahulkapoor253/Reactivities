@@ -2,7 +2,7 @@ import React, { useContext, Fragment } from "react";
 import { Item, Segment, Label } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import ActivityListItem from "./ActivityListItem";
-import { RootStore, RootStoreContext } from "../../../app/stores/rootStore";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const ActivityList: React.FC = () => {
   const rootStore = useContext(RootStoreContext);

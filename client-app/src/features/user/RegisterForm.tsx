@@ -12,17 +12,19 @@ import ErrorMessage from "../../app/common/form/ErrorMessage";
 const validate = combineValidators({
   email: isRequired("email"),
   password: isRequired("password"),
+  username: isRequired("username"),
+  displayName: isRequired("displayName"),
 });
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const rootStore = useContext(RootStoreContext);
-  const { login } = rootStore.userStore;
+  const { register } = rootStore.userStore;
 
   return (
     <FinalForm
       validate={validate}
       onSubmit={(values: IUserFormValues) =>
-        login(values).catch((error) => ({
+        register(values).catch((error) => ({
           [FORM_ERROR]: error,
         }))
       }
@@ -35,7 +37,7 @@ const LoginForm = () => {
         dirtySinceLastSubmit,
       }) => (
         <Form onSubmit={handleSubmit} error>
-          <Header as="h2" content="Login Reactivities" textAlign="center" />
+          <Header as="h2" content="Register New User" textAlign="center" />
           <Field
             placeholder="Email"
             component={TextInput}
@@ -48,18 +50,27 @@ const LoginForm = () => {
             name="password"
             type="password"
           />
+          <Field
+            placeholder="Username"
+            component={TextInput}
+            name="username"
+            type="text"
+          />
+          <Field
+            placeholder="Display Name"
+            component={TextInput}
+            name="displayName"
+            type="text"
+          />
           {submitError && !dirtySinceLastSubmit && (
-            <ErrorMessage
-              error={submitError}
-              text="Invalid username or password"
-            />
+            <ErrorMessage error={submitError} text="" />
           )}
 
           <Button
             disabled={(invalid && !dirtySinceLastSubmit) || pristine}
             loading={submitting}
             positive
-            content="Login"
+            content="Register"
             fluid
           />
         </Form>
@@ -68,4 +79,4 @@ const LoginForm = () => {
   );
 };
 
-export default observer(LoginForm);
+export default observer(RegisterForm);
