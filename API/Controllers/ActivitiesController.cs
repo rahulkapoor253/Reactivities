@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         // GET api/activities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Activity>>> List()
+        public async Task<ActionResult<IEnumerable<ActivityDto>>> List()
         {
             //let server know request has been cancelled by passing in cancellationtoken
             //let mediatr pattern do its job
@@ -23,7 +23,7 @@ namespace API.Controllers
         // GET api/activities/{id}
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<Activity>> Details(Guid id)
+        public async Task<ActionResult<ActivityDto>> Details(Guid id)
         {
             return await Mediator.Send(new Details.Query { Id = id });
         }
