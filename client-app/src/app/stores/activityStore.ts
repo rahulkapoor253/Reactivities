@@ -1,11 +1,12 @@
 import { observable, action, computed, runInAction } from "mobx";
 import "mobx-react-lite/batchingForReactDom";
 import { SyntheticEvent } from "react";
-import { IActivity } from "../models/Activity";
+import { IActivity, IAttendee } from "../models/Activity";
 import agent from "../api/agent";
 import { history } from "../..";
 import { toast } from "react-toastify";
 import { RootStore } from "./rootStore";
+import { IUser } from "../models/user";
 
 export default class ActivityStore {
   rootStore: RootStore;
@@ -181,6 +182,32 @@ export default class ActivityStore {
         this.submitting = false;
         this.target = "";
       });
+    }
+  };
+
+  @action attendActivity = () => {
+    const user: IUser = this.rootStore.userStore.user!;
+    const attendee: IAttendee = {
+      displayName: user.displayName,
+      image: user.image!,
+      username: user.username,
+      isHost: false,
+    };
+    if (this.activity) {
+      this.activity.Attendees.push(attendee);
+      this.activity.isGoing = true;
+      this.activityRegistry.set(this.activity.id, this.activity);
+    }
+  };
+
+  @action cancelAttendance = () => {
+    const user: IUser = this.rootStore.userStore.user!;
+    if (this.activity) {
+      this.activity.Attendees = this.activity.Attendees.filter(
+        (x) => x.username !== user.username
+      );
+      this.activity.isGoing = false;
+      this.activityRegistry.set(this.activity.id, this.activity);
     }
   };
 }
