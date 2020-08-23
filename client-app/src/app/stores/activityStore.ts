@@ -19,6 +19,7 @@ export default class ActivityStore {
   @observable loadingInitial = false;
   @observable submitting = false;
   @observable target = "";
+  @observable loading = false;
 
   groupActivitiesByDate(activities: IActivity[]) {
     const sortedActivitiesByDate = activities.sort(
@@ -185,7 +186,7 @@ export default class ActivityStore {
     }
   };
 
-  @action attendActivity = () => {
+  @action attendActivity = async () => {
     const user: IUser = this.rootStore.userStore.user!;
     const attendee: IAttendee = {
       displayName: user.displayName,
@@ -193,21 +194,49 @@ export default class ActivityStore {
       username: user.username,
       isHost: false,
     };
-    if (this.activity) {
-      this.activity.Attendees.push(attendee);
-      this.activity.isGoing = true;
-      this.activityRegistry.set(this.activity.id, this.activity);
+    this.loading = true;
+    //make api call
+    try {
+      await agent.Activities.attend(this.activity!.id);
+      runInAction(() => {
+        //local data handling
+        if (this.activity) {
+          this.activity.Attendees.push(attendee);
+          this.activity.isGoing = true;
+          this.activityRegistry.set(this.activity.id, this.activity);
+        }
+        this.loading = false;
+      });
+    } catch (err) {
+      console.log(err);
+      runInAction(() => {
+        this.loading = false;
+      });
+      toast.error("problem in attending to activity");
     }
   };
 
-  @action cancelAttendance = () => {
+  @action cancelAttendance = async () => {
     const user: IUser = this.rootStore.userStore.user!;
-    if (this.activity) {
-      this.activity.Attendees = this.activity.Attendees.filter(
-        (x) => x.username !== user.username
-      );
-      this.activity.isGoing = false;
-      this.activityRegistry.set(this.activity.id, this.activity);
+    this.loading = true;
+    try {
+      await agent.Activities.unattend(this.activity!.id);
+      runInAction(() => {
+        if (this.activity) {
+          this.activity.Attendees = this.activity.Attendees.filter(
+            (x) => x.username !== user.username
+          );
+          this.activity.isGoing = false;
+          this.activityRegistry.set(this.activity.id, this.activity);
+        }
+        this.loading = false;
+      });
+    } catch (err) {
+      console.log(err);
+      runInAction(() => {
+        this.loading = false;
+      });
+      toast.error("problem in cancelling to activity");
     }
   };
 }

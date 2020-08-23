@@ -25,7 +25,7 @@ interface IProps {
 
 const ActivityDetailedHeader: React.FC<IProps> = ({ activity }) => {
   const rootStore = useContext(RootStoreContext);
-  const { cancelAttendance, attendActivity } = rootStore.activityStore;
+  const { cancelAttendance, attendActivity, loading } = rootStore.activityStore;
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0px" }}>
@@ -58,11 +58,11 @@ const ActivityDetailedHeader: React.FC<IProps> = ({ activity }) => {
             Manage Event
           </Button>
         ) : activity.isGoing ? (
-          <Button color="teal" onClick={cancelAttendance}>
+          <Button color="teal" loading={loading} onClick={cancelAttendance}>
             Cancel attendance
           </Button>
         ) : (
-          <Button color="teal" onClick={attendActivity}>
+          <Button color="teal" loading={loading} onClick={attendActivity}>
             Join Activity
           </Button>
         )}
