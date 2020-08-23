@@ -1,6 +1,6 @@
 export interface IUser {
   displayName: string;
-  userName: string;
+  username: string;
   image?: string;
   token: string;
 }
@@ -10,5 +10,5 @@ export interface IUserFormValues {
   displayName: string;
   email: string;
   password?: string;
-  userName?: string;
+  username?: string;
 }

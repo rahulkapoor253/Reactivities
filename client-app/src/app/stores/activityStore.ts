@@ -46,12 +46,19 @@ export default class ActivityStore {
   @action loadActivities = async () => {
     //fetch data from .netcore api
     this.loadingInitial = true;
+    const user = this.rootStore.userStore.user!;
     try {
       const activities = await agent.Activities.list();
       //change of observables below await doesnt fall under action
       runInAction("loading activities", () => {
-        activities.forEach((activity: any) => {
+        activities.forEach((activity: IActivity) => {
           activity.date = new Date(activity.date!);
+          activity.isGoing = activity.Attendees.some(
+            (x) => x.username === user.username
+          );
+          activity.isHost = activity.Attendees.some(
+            (x) => x.username === user.username && x.isHost
+          );
           this.activityRegistry.set(activity.id, activity);
         });
         this.loadingInitial = false;
@@ -70,15 +77,22 @@ export default class ActivityStore {
     //1. via view on activities page when registry is set
     //2. directly via url when registry isnt set, so get data from API
     let activity = this.getActivity(id);
+    const user = this.rootStore.userStore.user!;
     if (activity) {
       this.activity = activity;
       return activity;
     } else {
       this.loadingInitial = true;
       try {
-        const activity = await agent.Activities.details(id);
+        const activity: IActivity = await agent.Activities.details(id);
         runInAction("loading activity", () => {
-          activity.date = new Date(activity.date);
+          activity.date = new Date(activity.date!);
+          activity.isGoing = activity.Attendees.some(
+            (x) => x.username === user.username
+          );
+          activity.isHost = activity.Attendees.some(
+            (x) => x.username === user.username && x.isHost
+          );
           this.activity = activity;
           //to prevent another call to api on manage activity page-> it finds it in registry only now
           this.activityRegistry.set(activity.id, activity);

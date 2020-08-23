@@ -1,5 +1,12 @@
 import React from "react";
-import { Item, Button, SegmentGroup, Segment, Icon } from "semantic-ui-react";
+import {
+  Item,
+  Button,
+  SegmentGroup,
+  Segment,
+  Icon,
+  Label,
+} from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import { IActivity } from "../../../app/models/Activity";
@@ -11,16 +18,45 @@ interface IProps {
 }
 
 const ActivityListItem: React.FC<IProps> = ({ activity }) => {
-  //console.log(activity.Attendees);
+  const host = activity.Attendees.filter((x) => x.isHost)[0];
   return (
     <SegmentGroup>
       <Segment>
         <Item.Group>
           <Item>
-            <Item.Image size="tiny" circular src="/assets/user.png" />
+            <Item.Image
+              size="tiny"
+              circular
+              src={host.image || "/assets/user.png"}
+            />
             <Item.Content>
-              <Item.Header as="a">{activity.title}</Item.Header>
-              <Item.Description>Hosted by Rahul Kapoor</Item.Description>
+              <Item.Header as={Link} to={`/activities/${activity.id}`}>
+                {activity.title}
+              </Item.Header>
+              <br></br>
+              {!activity.isHost && (
+                <Item.Description as="a">
+                  Hosted by {host.displayName}
+                </Item.Description>
+              )}
+              {activity.isHost && (
+                <Item.Description>
+                  <Label
+                    content="You are hosting this activity"
+                    color="orange"
+                    basic
+                  />
+                </Item.Description>
+              )}
+              {activity.isGoing && !activity.isHost && (
+                <Item.Description>
+                  <Label
+                    content="You are going to this activity"
+                    color="teal"
+                    basic
+                  />
+                </Item.Description>
+              )}
             </Item.Content>
           </Item>
         </Item.Group>
