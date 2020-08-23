@@ -4,13 +4,14 @@ import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import { IActivity } from "../../../app/models/Activity";
 import { format } from "date-fns";
+import ActivityListItemAttendees from "./ActivityListItemAttendees";
 
 interface IProps {
   activity: IActivity;
 }
 
 const ActivityListItem: React.FC<IProps> = ({ activity }) => {
-  //console.log(activity);
+  //console.log(activity.Attendees);
   return (
     <SegmentGroup>
       <Segment>
@@ -28,7 +29,9 @@ const ActivityListItem: React.FC<IProps> = ({ activity }) => {
         <Icon name="clock" /> {format(activity.date, "h:mm a")}
         <Icon name="marker" /> {activity.venue}, {activity.city}
       </Segment>
-      <Segment secondary>Attendees</Segment>
+      <Segment secondary>
+        <ActivityListItemAttendees attendees={activity.Attendees} />
+      </Segment>
       <Segment clearing>
         <span>{activity.description}</span>
         <Button
