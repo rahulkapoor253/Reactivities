@@ -126,6 +126,16 @@ export default class ActivityStore {
     this.submitting = true;
     try {
       await agent.Activities.create(activity);
+      //local data handling
+      const user: IUser = this.rootStore.userStore.user!;
+      const attendee: IAttendee = {
+        displayName: user.displayName,
+        image: user.image!,
+        username: user.username,
+        isHost: true,
+      };
+      //creating an activity so attendees list is empty
+      activity.Attendees.push(attendee);
       runInAction("create activity", () => {
         this.activityRegistry.set(activity.id, activity);
         this.activity = activity;

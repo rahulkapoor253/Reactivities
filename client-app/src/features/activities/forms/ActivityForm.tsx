@@ -62,9 +62,10 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     const dateAndTime = combineDateAndTime(values.date, values.time);
     const { date, time, ...activity } = values;
     activity.date = dateAndTime;
-    console.log(activity);
+    console.log(activity.date);
     if (activity.id) {
       //edited activity
+      console.log("editing activity");
       editActivity(activity);
     } else {
       //created new activity
@@ -72,6 +73,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
         ...activity,
         id: uuid(),
       };
+      console.log("creating activity");
       createActivity(newActivity);
     }
   };
