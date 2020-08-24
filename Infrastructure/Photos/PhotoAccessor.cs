@@ -4,6 +4,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace Infrastructure.Photos
 {
@@ -34,6 +35,12 @@ namespace Infrastructure.Photos
                     uploadResult = _cloudinary.Upload(uploadParams);
                 }
             }
+            //check for errors
+            if (uploadResult.Error != null)
+            {
+                throw new Exception(uploadResult.Error.Message);
+            }
+            //return response
             return new PhotoUploadResult
             {
                 PublicId = uploadResult.PublicId,
