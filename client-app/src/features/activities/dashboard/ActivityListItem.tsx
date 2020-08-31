@@ -35,8 +35,11 @@ const ActivityListItem: React.FC<IProps> = ({ activity }) => {
               </Item.Header>
               <br></br>
               {!activity.isHost && (
-                <Item.Description as="a">
-                  Hosted by {host.displayName}
+                <Item.Description>
+                  Hosted by{" "}
+                  <Link to={`/profile/${host.username}`}>
+                    {host.displayName}
+                  </Link>
                 </Item.Description>
               )}
               {activity.isHost && (
