@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,7 +39,7 @@ namespace Application.Users
                 {
                     Token = _generator.CreateToken(user),
                     DisplayName = user.DisplayName,
-                    Image = null,
+                    Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
                     Username = user.UserName
                 };
             }
