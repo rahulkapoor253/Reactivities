@@ -16,6 +16,7 @@ const ProfileContent = () => {
       panes={panes}
       menu={{ fluid: true, vertical: true }}
       menuPosition="right"
+      activeIndex="1"
     />
   );
 };

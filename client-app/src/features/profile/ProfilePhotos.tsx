@@ -2,11 +2,12 @@ import React, { useContext, useState } from "react";
 import { Tab, Header, Card, Image, Button } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import { RootStoreContext } from "../../app/stores/rootStore";
+import PhotoUploadWidget from "../../app/common/photoUpload/PhotoUploadWidget";
 
 const ProfilePhotos = () => {
   const rootStore = useContext(RootStoreContext);
   const { profile, isCurrentUser } = rootStore.profileStore;
-  const [addPhotoMode, setAddPhotoMode] = useState(false);
+  const [addPhotoMode, setAddPhotoMode] = useState(true);
 
   return (
     <Tab.Pane>
@@ -20,7 +21,7 @@ const ProfilePhotos = () => {
         />
       )}
       {addPhotoMode ? (
-        <p>My photo widget</p>
+        <PhotoUploadWidget />
       ) : (
         <Card.Group itemsPerRow={5}>
           {profile &&
