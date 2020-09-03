@@ -6,8 +6,18 @@ import PhotoUploadWidget from "../../app/common/photoUpload/PhotoUploadWidget";
 
 const ProfilePhotos = () => {
   const rootStore = useContext(RootStoreContext);
-  const { profile, isCurrentUser } = rootStore.profileStore;
+  const {
+    profile,
+    isCurrentUser,
+    uploadPhoto,
+    uploadingPhoto,
+  } = rootStore.profileStore;
   const [addPhotoMode, setAddPhotoMode] = useState(true);
+
+  //reset content after photo upload
+  const handleUploadImage = (photo: Blob) => {
+    uploadPhoto(photo).then(() => setAddPhotoMode(false));
+  };
 
   return (
     <Tab.Pane>
@@ -21,7 +31,10 @@ const ProfilePhotos = () => {
         />
       )}
       {addPhotoMode ? (
-        <PhotoUploadWidget />
+        <PhotoUploadWidget
+          uploadPhoto={handleUploadImage}
+          loading={uploadingPhoto}
+        />
       ) : (
         <Card.Group itemsPerRow={5}>
           {profile &&
