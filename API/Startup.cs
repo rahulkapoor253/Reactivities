@@ -50,6 +50,8 @@ namespace API
             });
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddAutoMapper(typeof(List.Handler));
+            //signalR
+            services.AddSignalR();
             services.AddControllers(opt =>
             {
                 //configure to authorize bearer token with every API call
@@ -115,6 +117,8 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                //signalR also acts as endpoint
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }
