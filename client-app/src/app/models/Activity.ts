@@ -9,7 +9,7 @@ export interface IActivity {
   isGoing: boolean;
   isHost: boolean;
   Attendees: IAttendee[];
-  Comments: IComment[];
+  comments: IComment[];
 }
 
 export interface IComment {

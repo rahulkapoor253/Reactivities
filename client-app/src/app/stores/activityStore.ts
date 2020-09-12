@@ -48,12 +48,24 @@ export default class ActivityStore {
 
     //all users polling this will get the comment data added to that activity;
     this.hubConnection.on("ReceiveComment", (comment) => {
-      this.activity!.Comments.push(comment);
+      console.log(comment);
+      runInAction(() => {
+        this.activity!.comments.push(comment);
+      });
     });
   };
 
   @action stopHubConnection = () => {
     this.hubConnection!.stop();
+  };
+
+  @action addComment = async (values: any) => {
+    values.ActivityId = this.activity!.id;
+    try {
+      await this.hubConnection!.invoke("SendComment", values);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   groupActivitiesByDate(activities: IActivity[]) {
@@ -171,6 +183,7 @@ export default class ActivityStore {
       };
       //creating an activity so attendees list is empty
       activity.Attendees.push(attendee);
+      activity.comments = [];
       runInAction("create activity", () => {
         this.activityRegistry.set(activity.id, activity);
         this.activity = activity;
