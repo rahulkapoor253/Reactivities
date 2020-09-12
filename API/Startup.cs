@@ -1,5 +1,6 @@
 using System.Text;
 using API.Middleware;
+using API.SignalR;
 using Application.Activities;
 using Application.Interfaces;
 using AutoMapper;
