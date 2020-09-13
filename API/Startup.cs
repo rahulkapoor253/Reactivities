@@ -4,6 +4,7 @@ using API.Middleware;
 using API.SignalR;
 using Application.Activities;
 using Application.Interfaces;
+using Application.Profiles;
 using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
@@ -110,6 +111,8 @@ namespace API
             services.AddScoped<IUserAccess, UserAccess>();
             //config for cloudinary
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            //config for profilereader
+            services.AddScoped<IProfileReader, ProfileReader>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
         }
 
