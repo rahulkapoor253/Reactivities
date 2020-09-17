@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Profiles;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Application.Profiles;
 using Persistence;
 
 namespace Application.Followers
@@ -22,7 +22,7 @@ namespace Application.Followers
         {
             private readonly DataContext _context;
             private readonly IProfileReader _profileReader;
-            public Handler(DataContext context, ProfileReader profileReader)
+            public Handler(DataContext context, IProfileReader profileReader)
             {
                 _context = context;
                 _profileReader = profileReader;
