@@ -21,6 +21,7 @@ const ProfilePage: React.FC<RouteComponentProps<RouteParams>> = ({ match }) => {
     unfollow,
     loading,
     isCurrentUser,
+    setActiveTab,
   } = rootStore.profileStore;
 
   useEffect(() => {
@@ -40,7 +41,7 @@ const ProfilePage: React.FC<RouteComponentProps<RouteParams>> = ({ match }) => {
             loading={loading}
             isCurrentUser={isCurrentUser}
           />
-          <ProfileContent />
+          <ProfileContent setActiveTab={setActiveTab} />
         </GridColumn>
       </Grid>
     </div>
