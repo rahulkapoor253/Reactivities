@@ -52,4 +52,5 @@ export interface IAttendee {
   image: string;
   isHost: boolean;
   username: string;
+  following?: boolean;
 }
