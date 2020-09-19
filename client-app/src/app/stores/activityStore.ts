@@ -242,18 +242,19 @@ export default class ActivityStore {
       await agent.Activities.create(activity);
       //local data handling
       const user: IUser = this.rootStore.userStore.user!;
+      let attendees = [];
       const attendee: IAttendee = {
         displayName: user.displayName,
         image: user.image!,
         username: user.username,
         isHost: true,
       };
-      //creating an activity so attendees list is empty
-      activity.Attendees.push(attendee);
+      attendees.push(attendee);
+      activity.Attendees = attendees;
+      activity.isHost = true;
       activity.comments = [];
       runInAction("create activity", () => {
         this.activityRegistry.set(activity.id, activity);
-        this.activity = activity;
         this.submitting = false;
       });
       history.push(`/activities/${activity.id}`);

@@ -74,6 +74,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
         id: uuid(),
       };
       console.log("creating activity");
+      console.log(newActivity);
       createActivity(newActivity);
     }
   };
