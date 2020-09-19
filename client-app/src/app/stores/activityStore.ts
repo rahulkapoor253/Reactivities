@@ -1,4 +1,11 @@
-import { observable, action, computed, runInAction, reaction } from "mobx";
+import {
+  observable,
+  action,
+  computed,
+  runInAction,
+  reaction,
+  toJS,
+} from "mobx";
 import "mobx-react-lite/batchingForReactDom";
 import { SyntheticEvent } from "react";
 import { IActivity, IAttendee } from "../models/Activity";
@@ -196,7 +203,8 @@ export default class ActivityStore {
     const user = this.rootStore.userStore.user!;
     if (activity) {
       this.activity = activity;
-      return activity;
+      //we dont want to return observable activity object;
+      return toJS(activity);
     } else {
       this.loadingInitial = true;
       try {
