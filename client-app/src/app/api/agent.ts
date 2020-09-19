@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { IUser, IUserFormValues } from "../models/user";
 import { IProfile, IPhoto } from "../models/Profile";
 
-axios.defaults.baseURL = "http://localhost:5000/api";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 //intercept each request to bind jwt
 axios.interceptors.request.use(
@@ -20,12 +20,6 @@ axios.interceptors.request.use(
     return Promise.reject(err);
   }
 );
-
-//add a delay in seconds
-const sleep = (ms: number) => (response: AxiosResponse) =>
-  new Promise<AxiosResponse>((resolve) =>
-    setTimeout(() => resolve(response), ms)
-  );
 
 //intercept response errors
 axios.interceptors.response.use(undefined, (error) => {
@@ -80,10 +74,7 @@ const requests = {
 
 const Activities = {
   list: (params: URLSearchParams): Promise<IActivitiesEnvelope> =>
-    axios
-      .get("/activities", { params: params })
-      .then(sleep(1000))
-      .then(responseBody),
+    axios.get("/activities", { params: params }).then(responseBody),
   details: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: IActivity) => requests.post("/activities", activity),
   update: (activity: IActivity) =>
