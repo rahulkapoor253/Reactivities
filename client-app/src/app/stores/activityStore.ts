@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction } from "mobx";
+import { observable, action, computed, runInAction, reaction } from "mobx";
 import "mobx-react-lite/batchingForReactDom";
 import { SyntheticEvent } from "react";
 import { IActivity, IAttendee } from "../models/Activity";
@@ -19,6 +19,17 @@ export default class ActivityStore {
   rootStore: RootStore;
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
+
+    //add reaction on change of filters
+    reaction(
+      () => this.predicate.keys(),
+      () => {
+        this.page = 0;
+        //clear the previous filter based activities and load new data based on filter change
+        this.activityRegistry.clear();
+        this.loadActivities();
+      }
+    );
   }
 
   @observable activityRegistry = new Map();
@@ -30,6 +41,29 @@ export default class ActivityStore {
   @observable.ref hubConnection: HubConnection | null = null;
   @observable activityCount = 0;
   @observable page = 0;
+  //key value pair for all params to fetch filtered activities
+  @observable predicate = new Map();
+
+  @action setPredicate = (predicate: string, value: string | Date) => {
+    this.predicate.clear();
+    if (predicate !== "all") {
+      this.predicate.set(predicate, value);
+    }
+  };
+
+  @computed get axiosParams() {
+    const params = new URLSearchParams();
+    params.append("limit", String(LIMIT));
+    params.append("offset", `${this.page ? this.page * LIMIT : 0}`);
+    this.predicate.forEach((value, key) => {
+      if (key === "startDate") {
+        params.append(key, value.toISOString());
+      } else {
+        params.append(key, value);
+      }
+    });
+    return params;
+  }
 
   @computed get totalPages() {
     return Math.ceil(this.activityCount / LIMIT);
@@ -126,7 +160,8 @@ export default class ActivityStore {
     this.loadingInitial = true;
     const user = this.rootStore.userStore.user!;
     try {
-      const activitiesEnvelope = await agent.Activities.list(LIMIT, this.page);
+      //rather than passing limit, offset, filter we pass SearchParams object
+      const activitiesEnvelope = await agent.Activities.list(this.axiosParams);
       //change of observables below await doesnt fall under action
       runInAction("loading activities", () => {
         //set activity count

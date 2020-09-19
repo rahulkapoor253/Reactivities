@@ -21,6 +21,12 @@ axios.interceptors.request.use(
   }
 );
 
+//add a delay in seconds
+const sleep = (ms: number) => (response: AxiosResponse) =>
+  new Promise<AxiosResponse>((resolve) =>
+    setTimeout(() => resolve(response), ms)
+  );
+
 //intercept response errors
 axios.interceptors.response.use(undefined, (error) => {
   //throw error which is catched in the api call in store
@@ -64,10 +70,11 @@ const requests = {
 };
 
 const Activities = {
-  list: (limit?: number, page?: number): Promise<IActivitiesEnvelope> =>
-    requests.get(
-      `/activities?limit=${limit}&offset=${page ? page * limit! : 0}`
-    ),
+  list: (params: URLSearchParams): Promise<IActivitiesEnvelope> =>
+    axios
+      .get("/activities", { params: params })
+      .then(sleep(1000))
+      .then(responseBody),
   details: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: IActivity) => requests.post("/activities", activity),
   update: (activity: IActivity) =>
