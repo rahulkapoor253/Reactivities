@@ -11,11 +11,11 @@ namespace API.Controllers
     {
         // GET api/activities
         [HttpGet]
-        public async Task<ActionResult<List.ActivityEnvelope>> List(int? limit, int? offset)
+        public async Task<ActionResult<List.ActivityEnvelope>> List(int? limit, int? offset, bool isGoing, bool isHost, DateTime? startDate)
         {
             //let server know request has been cancelled by passing in cancellationtoken
             //let mediatr pattern do its job
-            return await Mediator.Send(new List.Query(limit, offset));
+            return await Mediator.Send(new List.Query(limit, offset, isGoing, isHost, startDate));
         }
 
         // GET api/activities/{id}
