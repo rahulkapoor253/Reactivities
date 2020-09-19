@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Activities;
-using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +11,11 @@ namespace API.Controllers
     {
         // GET api/activities
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ActivityDto>>> List()
+        public async Task<ActionResult<List.ActivityEnvelope>> List(int? limit, int? offset)
         {
             //let server know request has been cancelled by passing in cancellationtoken
             //let mediatr pattern do its job
-            return await Mediator.Send(new List.Query());
+            return await Mediator.Send(new List.Query(limit, offset));
         }
 
         // GET api/activities/{id}
